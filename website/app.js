@@ -1,19 +1,27 @@
 /* Global Variables */
 const baseURL = "https://api.openweathermap.org/data/2.5/weather?zip=";
-const key = "&appid=8bdf4e9007c1ffae245275bbd3020d7a";
+const key = "&appid=8bdf4e9007c1ffae245275bbd3020d7a&units=metric";
 
 // Create a new date instance dynamically with JS
 let d = new Date();
-let newDate = d.getMonth() + "." + d.getDate() + "." + d.getFullYear();
+let newDate = d.getMonth() + 1 + "." + d.getDate() + "." + d.getFullYear();
 
 document.querySelector("#generate").addEventListener("click", () => {
   const zipCode = document.getElementById("zip").value;
-  const userInput = document.getElementById("feelings").value;
-  getWeather(baseURL, zipCode, key, userInput).then(function (data) {
-    postWeather("/", data).then(function (data) {
-      updateUI(data);
-    });
-  });
+  if (!isNaN(zipCode)) {
+    const userInput = document.getElementById("feelings").value;
+    if (userInput !== "") {
+      getWeather(baseURL, zipCode, key, userInput).then(function (data) {
+        postWeather("/", data).then(function (data) {
+          updateUI(data);
+        });
+      });
+    } else {
+      alert("Please enter your feeling.");
+    }
+  } else {
+    alert("Zip-code must be a number.");
+  }
 });
 
 const getWeather = async (baseURL, zipCode, key, userInput) => {
@@ -51,12 +59,14 @@ const postWeather = async (url = "", data = {}) => {
 };
 
 const updateUI = async (data) => {
+  const response = await fetch("/all");
   try {
-    document.getElementById("date").innerHTML = `Date: ${data.date}`;
-    document.getElementById("temp").innerHTML = `Temp: ${data.temp}`;
+    const allData = await response.json();
+    document.getElementById("date").innerHTML = `Date: ${allData.date}`;
+    document.getElementById("temp").innerHTML = `Temp: ${allData.temp}`;
     document.getElementById(
       "content"
-    ).innerHTML = `Content: ${data.userResponse}`;
+    ).innerHTML = `Content: ${allData.userResponse}`;
   } catch (error) {
     console.log("error: ", error);
   }

@@ -15,6 +15,6 @@ This project is about working with Web APIs and asynchronous code, creating a we
 
 # Dependencies
 
-* `express`
-* `body-parser`
-* `cors`
+- `express`
+- `body-parser`
+- `cors`
